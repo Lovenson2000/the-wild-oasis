@@ -46,7 +46,7 @@ const Error = styled.span`
 `;
 
 // eslint-disable-next-line react/prop-types
-function CreateCabinForm({cabinToEdit = {} }) {
+function CreateCabinForm({cabinToEdit = {}, onCloseModal }) {
   const {isCreating, createCabin} = useCreateCabin();
   const {isEditing, editCabin} = useEditCabin();
   const isWorking = isCreating || isEditing;
@@ -71,7 +71,8 @@ function CreateCabinForm({cabinToEdit = {} }) {
         {
           // eslint-disable-next-line no-unused-vars
           onSuccess: (data) => {
-            reset()
+            reset();
+            onCloseModal?.();
           },
         }
         );
@@ -81,14 +82,17 @@ function CreateCabinForm({cabinToEdit = {} }) {
       {
         // eslint-disable-next-line no-unused-vars
         onSuccess: (data) => {
-          reset()
+          reset();
+          onCloseModal?.();
         },
       }
       );
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit)}
+    type={onCloseModal ? "modal" : "regular"}
+    >
       <FormRow>
         <Label htmlFor="name">Cabin name</Label>
         <Input
@@ -187,7 +191,11 @@ function CreateCabinForm({cabinToEdit = {} }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button 
+          variation="secondary" 
+          type="reset"
+          onClick={() => onCloseModal?.()}
+          >
           Cancel
         </Button>
         <Button disabled={isWorking}>{isEditSession ? "Edit cabin" : "Create cabin"}</Button>
